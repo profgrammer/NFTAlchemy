@@ -5,6 +5,8 @@ import { MoralisProvider } from "react-moralis";
 import "./index.css";
 import * as serviceWorkerRegistration from "./serviceWorkerRegistration";
 import QuickStart from "components/QuickStart";
+import { DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
 
 /** Get your free Moralis Account https://moralis.io/ */
 
@@ -34,9 +36,11 @@ const Application = () => {
 };
 
 ReactDOM.render(
-  <StrictMode>
-    <Application />,
-  </StrictMode>,
+  <DndProvider backend={HTML5Backend}>
+    <StrictMode>
+      <Application />,
+    </StrictMode>
+  </DndProvider>,
   document.getElementById("root"),
 );
 
