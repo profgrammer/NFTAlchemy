@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useMoralis, useNFTBalances } from "react-moralis";
 import { Skeleton, Button, List, Spin } from "antd";
 import { useVerifyMetadata } from "hooks/useVerifyMetadata";
@@ -6,6 +6,7 @@ import { getStarted, mintToken } from "Web3/Web3Helper";
 import { checkRules } from "Web3/MoralisQueryHelper";
 import DraggableElement from "./DraggableElement";
 import DroppableArea from "DroppableArea";
+import axios from "axios";
 
 // const styles = {
 //   NFTs: {
@@ -28,6 +29,7 @@ function NFTBalance() {
   const { verifyMetadata } = useVerifyMetadata();
   const [selectedTokens, setSelectedTokens] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [myNFTs, setMyNFTs] = useState([]);
 
   // const toggleTokenSelection = (index) => {
   //   if (selectedTokens.includes(index)) {
@@ -36,6 +38,25 @@ function NFTBalance() {
   //     setSelectedTokens([...selectedTokens, index]);
   //   }
   // };
+
+  useEffect(() => {
+    const NFTPortFetchNFTs = async () => {
+      if (!isAuthenticated) {
+        return;
+      }
+      const endpoint =
+        "https://api.nftport.xyz/v0/accounts/" + user.get("ethAddress");
+      axios
+        .get(endpoint, {
+          headers: { Authorization: process.env.REACT_APP_NFTPORT_API_KEY },
+        })
+        .then((response) => {
+          setMyNFTs(response.data.nfts);
+        });
+    };
+    NFTPortFetchNFTs();
+    console.log(myNFTs);
+  }, [isAuthenticated, user, myNFTs]);
 
   const mintGenesisTokens = () => {
     getStarted(user.get("ethAddress"))
